@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Peso y Altura con IMC</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="registro-container">
+        <h1>Registro de Peso y Altura con IMC</h1>
+
+        <form id="formRegistro">
+            <label for="peso">Peso (kg):</label>
+            <input type="number" id="peso" step="0.1" required>
+
+            <label for="altura">Altura (cm):</label>
+            <input type="number" id="altura" step="0.1" required>
+
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha" required>
+
+            <button type="button" onclick="agregarRegistro()">Agregar Registro</button>
+        </form>
+
+        <table id="tablaRegistros">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Peso (kg)</th>
+                    <th>Altura (cm)</th>
+                    <th>IMC</th>
+                </tr>
+            </thead>
+            <tbody id="historialRegistros"></tbody>
+        </table>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

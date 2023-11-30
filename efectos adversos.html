@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Efectos Adversos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Consulta de Efectos Adversos</h1>
+    <label for="medicamento">Ingrese el nombre del medicamento:</label>
+    <input type="text" id="medicamento" placeholder="Ej. Meloxicam">
+    <button onclick="consultarEfectoAdverso()">Consultar</button>
+    <div id="result"></div>
+
+    <script>
+        function consultarEfectoAdverso() {
+            var medicamento = document.getElementById('medicamento').value;
+
+            // Realizar una solicitud a la API de Open FDA
+            fetch(`https://api.fda.gov/drug/event.json?search=patient.drug.medicinalproduct:${medicamento}`)
+                .then(response => response.json())
+                .then(data => {
+                    var resultDiv = document.getElementById('result');
+
+                    if (data.results.length > 0) {
+                        // Mostrar información de todos los resultados
+                        var efectosAdversos = data.results.map(resultado => resultado.patient.reaction[0].reactionmeddrapt);
+                        var detalles = data.results[0].patient.reaction[0].reactionmeddraversion || 'Detalles no disponibles';
+                        var explicaciones = obtenerExplicacionesSencillas(efectosAdversos);
+
+                        resultDiv.innerHTML = `Efectos adversos de ${medicamento}:<br>${explicaciones.join('<br>')}.<br>Detalles: ${detalles}`;
+                    } else {
+                        resultDiv.innerHTML = 'Efecto adverso no encontrado';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al obtener datos de la API:', error);
+                });
+        }
+
+        function obtenerExplicacionesSencillas(efectos) {
+            // Mapear términos técnicos a explicaciones sencillas
+            return efectos.map(efecto => {
+                switch (efecto.toLowerCase()) {
+                    case 'ulcer':
+                        return 'Úlceras: Lesiones abiertas en la mucosa del estómago o los intestinos.';
+                    case 'bleeding':
+                        return 'Sangrado: Pérdida de sangre, que puede manifestarse como sangrado gastrointestinal.';
+                    case 'perforation':
+                        return 'Perforación: Formación de agujeros en el estómago o los intestinos.';
+                    // Agregar más casos según sea necesario
+                    default:
+                        return `No hay una explicación sencilla disponible para "${efecto}".`;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
